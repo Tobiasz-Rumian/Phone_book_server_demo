@@ -10,11 +10,15 @@
  */
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
+import java.util.Random;
 
 
 class Client extends JFrame implements Runnable {
@@ -22,7 +26,7 @@ class Client extends JFrame implements Runnable {
     private JTextField message2 = new JTextField(10);
     private JTextArea textArea = new JTextArea(15, 30);
     private JLabel labelTextArea = new JLabel("Dialog:");
-    private JButton send = new JButton("Wyślij");
+    private JButton send = new JButton("Wyślij"),about = new JButton("Autor");
     private JMenuBar menuBar = new JMenuBar();
     private JComboBox<String> commands = new JComboBox<>();
 
@@ -62,6 +66,25 @@ class Client extends JFrame implements Runnable {
     Client(String n) {
         super(n);
         setJMenuBar(menuBar);
+        nick = n;
+        setSize(400, 400);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        menuBar.add(commands);
+        menuBar.add(labelMessage1);
+        menuBar.add(message1);
+        menuBar.add(labelMessage2);
+        menuBar.add(message2);
+        menuBar.add(send);
+        menuBar.add(about);
+        panel.add(labelTextArea);
+        JScrollPane scroll_bars = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        panel.add(scroll_bars);
+        setContentPane(panel);
+        Thread t = new Thread(this);
+        t.start();
+        setVisible(true);
         commands.addActionListener(e -> {
             switch (commands.getSelectedIndex()) {
                 case 0:
@@ -156,25 +179,15 @@ class Client extends JFrame implements Runnable {
             }
             repaint();
         });
-        nick = n;
-        setSize(400, 400);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        menuBar.add(commands);
-        menuBar.add(labelMessage1);
-        menuBar.add(message1);
-        menuBar.add(labelMessage2);
-        menuBar.add(message2);
-        menuBar.add(send);
-        panel.add(labelTextArea);
-        JScrollPane scroll_bars = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        panel.add(scroll_bars);
-        setContentPane(panel);
-        Thread t = new Thread(this);
-        t.start();
-        setVisible(true);
+        about.addActionListener(e->{
+            About about;
+            try {
+                about = new About();
+                about.setVisible(true);
+            } catch (Exception event) {
+                System.err.println(event.getMessage());
+            }
+        });
     }
 
     private void setMessages(boolean Bmessage1, boolean Bmessage2, String Smessage1, String Smessage2) {
@@ -221,4 +234,45 @@ class Client extends JFrame implements Runnable {
         }
     }
 
+}
+class About extends JFrame implements Runnable{
+    private Random random = new Random();
+    private JPanel panel = new JPanel();
+    private boolean kill=false;
+    About() throws MalformedURLException {
+        super("O Autorze");
+        setContentPane(panel);
+        URL url = null;
+        try {
+            url = new URL("https://media.giphy.com/media/l0HlIKdi4DIEDk92g/giphy.gif");
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        Icon icon = new ImageIcon(url);
+        JLabel label = new JLabel(icon);
+        panel.add(new JLabel("Autor:\t Tobiasz Rumian\t Indeks: 226131"), BorderLayout.NORTH);
+        panel.add(label, BorderLayout.CENTER);
+        JButton ok = new JButton("ok");
+        panel.add(ok, BorderLayout.SOUTH);
+        setSize(400, 400);
+        (new Thread(this)).start();
+        ok.addActionListener(e -> {
+            setVisible(false);
+            kill=true;
+        });
+    }
+
+    public void run() {
+        while(!kill){
+            Color color;
+            float a=(random.nextInt(100)/(float)100),b=(random.nextInt(100)/(float)100),c=(random.nextInt(100)/(float)100);
+            color=new Color(a,b,c);
+            panel.setBackground(color);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
