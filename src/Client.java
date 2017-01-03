@@ -10,15 +10,11 @@
  */
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
-import java.util.Random;
 
 
 class Client extends JFrame implements Runnable {
@@ -234,45 +230,4 @@ class Client extends JFrame implements Runnable {
         }
     }
 
-}
-class About extends JFrame implements Runnable{
-    private Random random = new Random();
-    private JPanel panel = new JPanel();
-    private boolean kill=false;
-    About() throws MalformedURLException {
-        super("O Autorze");
-        setContentPane(panel);
-        URL url = null;
-        try {
-            url = new URL("https://media.giphy.com/media/l0HlIKdi4DIEDk92g/giphy.gif");
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-        Icon icon = new ImageIcon(url);
-        JLabel label = new JLabel(icon);
-        panel.add(new JLabel("Autor:\t Tobiasz Rumian\t Indeks: 226131"), BorderLayout.NORTH);
-        panel.add(label, BorderLayout.CENTER);
-        JButton ok = new JButton("ok");
-        panel.add(ok, BorderLayout.SOUTH);
-        setSize(400, 400);
-        (new Thread(this)).start();
-        ok.addActionListener(e -> {
-            setVisible(false);
-            kill=true;
-        });
-    }
-
-    public void run() {
-        while(!kill){
-            Color color;
-            float a=(random.nextInt(100)/(float)100),b=(random.nextInt(100)/(float)100),c=(random.nextInt(100)/(float)100);
-            color=new Color(a,b,c);
-            panel.setBackground(color);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
