@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
 
 
@@ -61,6 +62,7 @@ class Client extends JFrame implements Runnable {
 
     Client(String n) {
         super(n);
+        new About(Boolean.FALSE);
         setJMenuBar(menuBar);
         nick = n;
         setSize(400, 400);
@@ -176,13 +178,13 @@ class Client extends JFrame implements Runnable {
             repaint();
         });
         about.addActionListener(e->{
-            About about;
             try {
-                about = new About();
-                about.setVisible(true);
-            } catch (Exception event) {
-                System.err.println(event.getMessage());
+                new About();
+            } catch (MalformedURLException e1) {
+                //e1.printStackTrace();
             }
+
+
         });
     }
 

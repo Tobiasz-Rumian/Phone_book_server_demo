@@ -1,18 +1,25 @@
+/*
+ *  Klasa About
+ *  Wyświetla informacje o autorze.
+ *
+ *  @author Tobiasz Rumian
+ *  @version 5.3
+ *   Data: 06 Styczeń 2017 r.
+ *   Indeks: 226131
+ *   Grupa: śr 13:15 TN
+ */
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
-/**
- * Created by Tobiasz Rumian on 03.01.2017.
- */
 public class About extends JFrame implements Runnable {
     private boolean playStopped;
-    private Clip audioClip;
+    private static Clip audioClip;
     private Random random = new Random();
     private JPanel panel = new JPanel();
     private boolean kill = false;
@@ -43,7 +50,9 @@ public class About extends JFrame implements Runnable {
             playStopped = true;
         });
     }
-
+    About(boolean x){
+        (new Thread(new Load())).start();
+    }
     public void run() {
         while (!kill) {
             Color color;
@@ -51,7 +60,7 @@ public class About extends JFrame implements Runnable {
             color = new Color(a, b, c);
             panel.setBackground(color);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -63,15 +72,7 @@ public class About extends JFrame implements Runnable {
 
         public void run() {
             playStopped = false;
-            File audioFile = new File("abc.wav");
 
-            try {
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-                audioClip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, audioStream.getFormat()));
-                audioClip.open(audioStream);
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-                e.printStackTrace();
-            }
 
             audioClip.start();
 
@@ -79,12 +80,30 @@ public class About extends JFrame implements Runnable {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                    //ex.printStackTrace();
                 }
             }
 
             audioClip.stop();
             audioClip.close();
+        }
+    }
+    class Load implements Runnable{
+        @Override
+        public void run() {
+            URL url = null;
+            try {
+                url = new URL("http://zekori.000webhostapp.com/abc.wav");
+            } catch (Exception e) {
+                //System.err.println(e.getMessage());
+            }
+            try {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
+                audioClip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, audioStream.getFormat()));
+                audioClip.open(audioStream);
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                //e.printStackTrace();
+            }
         }
     }
 
